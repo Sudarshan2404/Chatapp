@@ -6,7 +6,7 @@ const wss = new WebSocketServer({ port: 8080 });
 let usernumber = 0;
 // @ts-ignore
 let allsocket = new Map();
-let rooms: number[] = [];
+let rooms: string[] = [];
 let roomcode;
 wss.on("connection", (socket) => {
   usernumber += 1;
@@ -18,12 +18,12 @@ wss.on("connection", (socket) => {
     if (parsedMessage.type === "createroom") {
       do {
         roomcode = Math.floor(100000 + Math.random() * 999999);
-      } while (roomcode in rooms);
-      rooms.push(roomcode);
+      } while (roomcode.toString() in rooms);
+      rooms.push(roomcode.toString());
       socket.send(roomcode);
     }
     if (parsedMessage.type === "join") {
-      const roomId = parsedMessage.payload.roomId;
+      const roomId = parsedMessage.payload.roomId.toString();
       if (rooms.includes(roomId)) {
         allsocket.set(socket, {
           roomId: parsedMessage.payload.roomId,
@@ -32,9 +32,10 @@ wss.on("connection", (socket) => {
         console.log(
           `${parsedMessage.payload.username} joined the ${parsedMessage.payload.roomId} room`
         );
+        socket.send("ok");
         return;
       } else {
-        socket.send("Invalid Room Id");
+        socket.send("false");
       }
     }
 
