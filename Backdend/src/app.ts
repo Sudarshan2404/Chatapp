@@ -64,7 +64,7 @@ wss.on("connection", (socket) => {
 
             socket.send(
               JSON.stringify({
-                sender: "system",
+                sender: "joinsystem",
                 payload: {
                   status: "True",
                   message: "Joined room successfully",
@@ -96,7 +96,7 @@ wss.on("connection", (socket) => {
             if (user.roomId == currentUserRoom && currentUserSocket != socket) {
               return currentUserSocket.send(
                 JSON.stringify({
-                  sender: "participant",
+                  sender: "server",
                   payload: {
                     message: parsedMessage.payload.message,
                     username: cUsername,
@@ -121,7 +121,14 @@ wss.on("connection", (socket) => {
       const currentUserRoom = currentUser.roomId;
       allsocket.forEach((user, currentUserSocket) => {
         if (user.roomId == currentUserRoom && currentUserSocket != socket) {
-          return currentUserSocket.send(`${cUsername} left the chat`);
+          return currentUserSocket.send(
+            JSON.stringify({
+              sender: "system",
+              payload: {
+                message: `${cUsername} left this chat`,
+              },
+            })
+          );
         }
       });
       allsocket.delete(socket);

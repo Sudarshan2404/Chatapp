@@ -1,59 +1,86 @@
 import { useEffect, useRef, useState } from "react";
 import { useSocket } from "../Socket.tsx";
+import { h1 } from "motion/react-client";
 
 const Chat = () => {
   type Msg = {
     message: string;
-    sender: "me" | "server";
+    username: string;
+    sender: "me" | "server" | "system";
   };
 
-  const s = useSocket();
-  const socket = s.current;
+  const socketRef = useSocket();
   const [joined, setJoined] = useState<boolean>(false);
 
   const inputref = useRef<HTMLInputElement | null>(null);
   const [myMsg, setMyMsg] = useState<Msg[]>([]);
   const username = localStorage.getItem("username");
   const roomId = localStorage.getItem("roomId");
+  console.log(myMsg);
   const SendMsg = () => {
-    if (!inputref || !inputref.current || !socket) return;
-    if (!joined) {
-      alert("Please Join a room");
-      return;
-    }
-    const message = inputref.current.value.trim();
+    const socket = socketRef.current;
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+
+    const message = inputref.current?.value.trim();
     if (!message) return;
+
     socket.send(
       JSON.stringify({
         type: "chat",
-        payload: {
-          message: message,
-        },
+        payload: { message },
       })
     );
-    setMyMsg((prev) => [...prev, { sender: "me", message: message }]);
-    inputref.current.value = "";
+
+    setMyMsg((prev) => [...prev, { sender: "me", message }]);
+    inputref.current!.value = "";
   };
 
   useEffect(() => {
+    const socket = socketRef.current;
     if (!socket) return;
-    socket.send(
-      JSON.stringify({
-        type: "join",
-        payload: { roomId, username },
-      })
-    );
-    setJoined(true);
-    socket.onmessage = (event) => {
-      if (event.data === "Joined server Sybau") {
-        setJoined(true);
-        return;
-      }
-      setMyMsg((prev) => [...prev, { message: event.data, sender: "server" }]);
+
+    if (!roomId || !username) {
+      alert("Invalid session. Please join again.");
+      return;
+    }
+
+    const handleOpen = () => {
+      socket.send(
+        JSON.stringify({
+          type: "join",
+          payload: { roomId, username },
+        })
+      );
     };
 
-    socket.send;
-  }, []);
+    const handleMessage = (event: MessageEvent) => {
+      const res = JSON.parse(event.data);
+
+      if (res.data?.sender === "joinsystem") {
+        if (res.data.payload?.status === "true") {
+          setJoined(true);
+          return;
+        }
+      }
+
+      setMyMsg((prev) => [
+        ...prev,
+        {
+          message: res.payload.message,
+          username: res.payload.username,
+          sender: res.sender,
+        },
+      ]);
+    };
+
+    socket.addEventListener("open", handleOpen);
+    socket.addEventListener("message", handleMessage);
+
+    return () => {
+      socket.removeEventListener("open", handleOpen);
+      socket.removeEventListener("message", handleMessage);
+    };
+  }, [socketRef, roomId, username]);
 
   return (
     <div className="flex justify-center items-centerw-screen h-screen bg-amber-200">
@@ -65,9 +92,21 @@ const Chat = () => {
                 {msg.message}
               </h1>
             </div>
-          ) : (
+          ) : msg.sender === "server" ? (
             <div key={i} className=" flex w-[80%] ml-auto mr-auto">
-              <h1 className="px-2 py-1 bg-white w-fit h-auto rounded-xl ml-1 mb-2">
+              <div className="min-w-20 flex flex-col gap-2 px-2 py-1 bg-white w-fit h-auto rounded-xl ml-1 mb-2">
+                <h1 className="text-purple-500 text-[12px] justify-self-start px-1">
+                  {msg?.username}
+                </h1>
+                <h1 className="text-[14px] px-1">{msg.message}</h1>
+              </div>
+            </div>
+          ) : (
+            <div
+              key={i}
+              className=" flex w-[80%] ml-auto mr-auto justify-center"
+            >
+              <h1 className="px-2 py-1 text-gray-400 w-fit h-auto rounded-xl ml-1 mb-2">
                 {msg.message}
               </h1>
             </div>
