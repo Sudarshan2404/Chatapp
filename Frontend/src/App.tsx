@@ -1,12 +1,13 @@
 import Chat from "./pages/Chat";
 import Room from "./pages/Room";
+import { Routes, Route } from "react-router";
 
 const App = () => {
   return (
-    <div className="flex justify-center items-centerw-screen h-screen bg-amber-200">
-      <Room />
-      {/* <Chat /> */}
-    </div>
+    <Routes>
+      <Route path="/" element={<Room />} />
+      <Route path="/chat" element={<Chat />} />
+    </Routes>
   );
 };
 

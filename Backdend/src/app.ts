@@ -1,65 +1,134 @@
 import { WebSocketServer, WebSocket } from "ws";
 
 // @ts-ignore
-
 const wss = new WebSocketServer({ port: 8080 });
 let usernumber = 0;
 // @ts-ignore
 let allsocket = new Map();
-let rooms: string[] = [];
+let rooms: string[] = ["121215"];
 let roomcode;
 wss.on("connection", (socket) => {
-  usernumber += 1;
-  console.log(`user ${usernumber} connected`);
+  try {
+    usernumber += 1;
+    console.log(`user ${usernumber} connected`);
 
-  socket.on("message", (message) => {
-    // @ts-ignore
-    const parsedMessage = JSON.parse(message);
-    if (parsedMessage.type === "createroom") {
-      do {
-        roomcode = Math.floor(100000 + Math.random() * 999999);
-      } while (roomcode.toString() in rooms);
-      rooms.push(roomcode.toString());
-      socket.send(roomcode);
-    }
-    if (parsedMessage.type === "join") {
-      const roomId = parsedMessage.payload.roomId.toString();
-      if (rooms.includes(roomId)) {
-        allsocket.set(socket, {
-          roomId: parsedMessage.payload.roomId,
-          Username: parsedMessage.payload.username,
-        });
-        console.log(
-          `${parsedMessage.payload.username} joined the ${parsedMessage.payload.roomId} room`
-        );
-        socket.send("ok");
+    socket.on("message", (message) => {
+      let parsedMessage;
+      try {
+        parsedMessage = JSON.parse(message.toString());
+      } catch (err) {
+        socket.send("Invalid JSON format");
         return;
-      } else {
-        socket.send("false");
       }
-    }
+      if (parsedMessage.type === "createroom") {
+        do {
+          roomcode = Math.floor(100000 + Math.random() * 999999);
+        } while (rooms.includes(roomcode.toString()));
+        rooms.push(roomcode.toString());
+        socket.send(roomcode);
+      }
+      if (parsedMessage.type === "join") {
+        try {
+          const roomId = parsedMessage.payload.roomId.toString();
+          if (rooms.includes(roomId)) {
+            allsocket.set(socket, {
+              roomId: parsedMessage.payload.roomId,
+              Username: parsedMessage.payload.username,
+            });
+            const currentUser = allsocket.get(socket);
+            if (!currentUser) {
+              console.error("User didnt join any room");
+              socket.send("You must join a room first");
+              return;
+            }
+            const cUsername = currentUser.Username;
+            const currentUserRoom = currentUser.roomId;
 
-    if (parsedMessage.type === "chat") {
+            console.log(
+              `${parsedMessage.payload.username} joined the ${parsedMessage.payload.roomId} room`
+            );
+
+            allsocket.forEach((user, currentUserSocket) => {
+              if (
+                user.roomId == currentUserRoom &&
+                currentUserSocket != socket
+              ) {
+                return currentUserSocket.send(
+                  JSON.stringify({
+                    sender: "system",
+                    payload: { message: `${cUsername} joined this chat` },
+                  })
+                );
+              }
+            });
+
+            socket.send(
+              JSON.stringify({
+                sender: "system",
+                payload: {
+                  status: "True",
+                  message: "Joined room successfully",
+                },
+              })
+            );
+            return;
+          } else {
+            socket.send("false");
+          }
+        } catch (error) {
+          console.error("An Error occured while joining room", error);
+          socket.send("An internal server Error Occured");
+        }
+      }
+
+      if (parsedMessage.type === "chat") {
+        try {
+          const currentUser = allsocket.get(socket);
+          if (!currentUser) {
+            console.error("User didnt join any room");
+            socket.send("You must join a room first");
+            return;
+          }
+          const cUsername = currentUser.Username;
+          const currentUserRoom = currentUser.roomId;
+
+          allsocket.forEach((user, currentUserSocket) => {
+            if (user.roomId == currentUserRoom && currentUserSocket != socket) {
+              return currentUserSocket.send(
+                JSON.stringify({
+                  sender: "participant",
+                  payload: {
+                    message: parsedMessage.payload.message,
+                    username: cUsername,
+                  },
+                })
+              );
+            }
+            console.log("Went wrong");
+            return;
+          });
+        } catch (error) {
+          console.log("an Error occuerd while chatting", error);
+          socket.send("An internal Error occured");
+        }
+      }
+    });
+
+    socket.on("close", () => {
       const currentUser = allsocket.get(socket);
+      if (!currentUser) return;
       const cUsername = currentUser.Username;
       const currentUserRoom = currentUser.roomId;
-
       allsocket.forEach((user, currentUserSocket) => {
         if (user.roomId == currentUserRoom && currentUserSocket != socket) {
-          return currentUserSocket.send(
-            `${parsedMessage.payload.message}: form ${cUsername}`
-          );
+          return currentUserSocket.send(`${cUsername} left the chat`);
         }
-        console.log("Went wrong");
-        return;
       });
-    }
-  });
-
-  socket.on("close", () => {
-    const currentUser = allsocket.get(socket);
-    const cUsername = currentUser.Username;
-    allsocket.delete(socket);
-    console.log(`${cUsername} Disconnected`);
-  });
+      allsocket.delete(socket);
+      console.log(`${cUsername} Disconnected`);
+    });
+  } catch (error) {
+    console.error("Shit went bad brother", error);
+    socket.send("Check syntax and try again brother");
+  }
 });
