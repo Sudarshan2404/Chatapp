@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useSocket } from "../Socket.tsx";
-import { h1 } from "motion/react-client";
 
 const Chat = () => {
   type Msg = {
@@ -11,6 +10,7 @@ const Chat = () => {
 
   const socketRef = useSocket();
   const [joined, setJoined] = useState<boolean>(false);
+  console.log(joined);
 
   const inputref = useRef<HTMLInputElement | null>(null);
   const [myMsg, setMyMsg] = useState<Msg[]>([]);
@@ -31,7 +31,7 @@ const Chat = () => {
       })
     );
 
-    setMyMsg((prev) => [...prev, { sender: "me", message }]);
+    setMyMsg((prev) => [...prev, { sender: "me", message, username: "me" }]);
     inputref.current!.value = "";
   };
 
