@@ -1,9 +1,7 @@
-import React from "react";
-
 const st500 = () => {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[radial-gradient(circle_at_top,_#1e293b,_#020617)]">
-      <div className="w-[90%] max-w-[520px] rounded-2xl bg-white/5 backdrop-blur-xl px-8 py-10 text-center shadow-[0_30px_60px_rgba(0,0,0,0.6)] animate-fadeIn">
+      <div className="w-[90%] max-w-130 rounded-2xl bg-white/5 backdrop-blur-xl px-8 py-10 text-center shadow-[0_30px_60px_rgba(0,0,0,0.6)] animate-fadeIn">
         {/* Logo */}
         <div className="mb-5 font-['Pixelify_Sans'] text-xl tracking-widest text-sky-400">
           SIMPLECHAT
