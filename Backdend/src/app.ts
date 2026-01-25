@@ -10,7 +10,7 @@ let roomcode;
 wss.on("connection", (socket) => {
   try {
     usernumber += 1;
-    console.log(`user ${usernumber} connected`);
+    // console.log(`user ${usernumber} connected`);
 
     socket.on("message", (message) => {
       let parsedMessage;
@@ -37,7 +37,7 @@ wss.on("connection", (socket) => {
             });
             const currentUser = allsocket.get(socket);
             if (!currentUser) {
-              console.error("User didnt join any room");
+              // console.error("User didnt join any room");
               socket.send("You must join a room first");
               return;
             }
@@ -104,7 +104,7 @@ wss.on("connection", (socket) => {
                 }),
               );
             }
-            console.log("Went wrong");
+            // console.log("Went wrong");
             return;
           });
         } catch (error) {
@@ -132,7 +132,7 @@ wss.on("connection", (socket) => {
         }
       });
       allsocket.delete(socket);
-      console.log(`${cUsername} Disconnected`);
+      // console.log(`${cUsername} Disconnected`);
     });
   } catch (error) {
     console.error("Shit went bad brother", error);
