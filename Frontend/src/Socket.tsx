@@ -6,7 +6,7 @@ export const useSocket = () => {
   useEffect(() => {
     if (socketRef.current) return; // ✅ prevents double connect (StrictMode)
 
-    const ws = new WebSocket("ws://localhost:8080");
+    const ws = new WebSocket("ws://192.168.1.34:8080");
     socketRef.current = ws;
 
     ws.onopen = () => {

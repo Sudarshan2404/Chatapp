@@ -28,7 +28,7 @@ const Chat = () => {
       JSON.stringify({
         type: "chat",
         payload: { message },
-      })
+      }),
     );
 
     setMyMsg((prev) => [...prev, { sender: "me", message, username: "me" }]);
@@ -49,7 +49,7 @@ const Chat = () => {
         JSON.stringify({
           type: "join",
           payload: { roomId, username },
-        })
+        }),
       );
     };
 
@@ -84,7 +84,7 @@ const Chat = () => {
 
   return (
     <div className="flex justify-center items-centerw-screen h-screen bg-amber-200">
-      <div className="flex flex-col w-[50%] h-[98%] justify-end bg-amber-100 m-2 rounded-2xl gap-2 overflow-auto">
+      <div className="flex flex-col w-full max-h-screen md:w-[50%] md:h-[98%] justify-end bg-amber-100 m-2 rounded-2xl gap-2 overflow-auto">
         {myMsg.map((msg, i) =>
           msg.sender === "me" ? (
             <div key={i} className=" flex w-[80%] ml-auto mr-auto justify-end">
@@ -110,7 +110,7 @@ const Chat = () => {
                 {msg.message}
               </h1>
             </div>
-          )
+          ),
         )}
         <div className="flex w-[80%] items-center justify-center mb-4 gap-2 ml-auto mr-auto">
           <input

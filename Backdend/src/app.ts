@@ -1,7 +1,7 @@
 import { WebSocketServer, WebSocket } from "ws";
 
 // @ts-ignore
-const wss = new WebSocketServer({ port: 8080 });
+const wss = new WebSocketServer({ port: 8080, host: "0.0.0.0" });
 let usernumber = 0;
 // @ts-ignore
 let allsocket = new Map();
@@ -45,7 +45,7 @@ wss.on("connection", (socket) => {
             const currentUserRoom = currentUser.roomId;
 
             console.log(
-              `${parsedMessage.payload.username} joined the ${parsedMessage.payload.roomId} room`
+              `${parsedMessage.payload.username} joined the ${parsedMessage.payload.roomId} room`,
             );
 
             allsocket.forEach((user, currentUserSocket) => {
@@ -57,7 +57,7 @@ wss.on("connection", (socket) => {
                   JSON.stringify({
                     sender: "system",
                     payload: { message: `${cUsername} joined this chat` },
-                  })
+                  }),
                 );
               }
             });
@@ -69,7 +69,7 @@ wss.on("connection", (socket) => {
                   status: "True",
                   message: "Joined room successfully",
                 },
-              })
+              }),
             );
             return;
           } else {
@@ -101,7 +101,7 @@ wss.on("connection", (socket) => {
                     message: parsedMessage.payload.message,
                     username: cUsername,
                   },
-                })
+                }),
               );
             }
             console.log("Went wrong");
@@ -127,7 +127,7 @@ wss.on("connection", (socket) => {
               payload: {
                 message: `${cUsername} left this chat`,
               },
-            })
+            }),
           );
         }
       });
