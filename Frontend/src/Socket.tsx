@@ -8,7 +8,7 @@ export const useSocket = () => {
   useEffect(() => {
     if (socketRef.current) return; // ✅ prevents double connect (StrictMode)
 
-    const ws = new WebSocket("ws://192.168.1.33:8080");
+    const ws = new WebSocket(import.meta.env.VITE_WEB);
     socketRef.current = ws;
 
     ws.onopen = () => {
