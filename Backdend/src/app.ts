@@ -1,7 +1,19 @@
 import { WebSocketServer, WebSocket } from "ws";
+import express from "express";
+import http from "http";
+import dotenv from "dotenv";
 
 // @ts-ignore
-const wss = new WebSocketServer({ port: 8080, host: "0.0.0.0" });
+const PORT = Number(process.env.PORT) || 8080;
+const app = express();
+const server = http.createServer(app);
+// @ts-ignore
+
+app.get("/", (req, res) => {
+  res.send("Wensocket server started successfully");
+});
+
+const wss = new WebSocketServer({ server });
 let usernumber = 0;
 // @ts-ignore
 let allsocket = new Map();
@@ -43,10 +55,6 @@ wss.on("connection", (socket) => {
             }
             const cUsername = currentUser.Username;
             const currentUserRoom = currentUser.roomId;
-
-            console.log(
-              `${parsedMessage.payload.username} joined the ${parsedMessage.payload.roomId} room`,
-            );
 
             allsocket.forEach((user, currentUserSocket) => {
               if (
@@ -138,4 +146,8 @@ wss.on("connection", (socket) => {
     console.error("Shit went bad brother", error);
     socket.send("Check syntax and try again brother");
   }
+});
+
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
 });
