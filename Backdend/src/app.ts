@@ -4,6 +4,8 @@ import http from "http";
 import dotenv from "dotenv";
 import cors from "cors";
 
+dotenv.config();
+
 // @ts-ignore
 const PORT = Number(process.env.PORT) || 8080;
 const app = express();
@@ -13,7 +15,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173", // dev
-      "https://your-frontend-domain.com", // prod
+      "https://chatapp-phi.vercel.app", // prod
     ],
   }),
 );
