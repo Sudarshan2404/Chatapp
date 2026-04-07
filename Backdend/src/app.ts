@@ -2,19 +2,28 @@ import { WebSocketServer, WebSocket } from "ws";
 import express from "express";
 import http from "http";
 import dotenv from "dotenv";
+import cors from "cors";
 
 // @ts-ignore
 const PORT = Number(process.env.PORT) || 8080;
 const app = express();
 const server = http.createServer(app);
 // @ts-ignore
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173", // dev
+      "https://your-frontend-domain.com", // prod
+    ],
+  }),
+);
 
 app.get("/", (req, res) => {
   res.send("Wensocket server started successfully");
 });
 
 app.get("/ping", (req, res) => {
-  res.status(200).json({ success: false, message: "Server is running" });
+  res.status(200).json({ success: true, message: "Server is running" });
 });
 
 const wss = new WebSocketServer({ server });

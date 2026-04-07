@@ -91,7 +91,7 @@ const Chat = () => {
     <>
       <div className="flex justify-center items-center w-screen h-screen bg-amber-200">
         <div className="flex flex-col w-screen h-full md:w-[50%] md:h-[98%] bg-amber-100 md:m-2 justify-end md:rounded-2xl gap-2 py-4">
-          <div className="w-full text-amber-300 flex flex-col justify-center items-center px-3 border-b-1 border-amber-300">
+          <div className="w-full text-amber-300 flex flex-col justify-center items-center px-3 border-b border-amber-300">
             <h1 className=" text-5xl md:text-6xl g-font text-center">
               Simpl-Chat
             </h1>
