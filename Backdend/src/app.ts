@@ -13,6 +13,10 @@ app.get("/", (req, res) => {
   res.send("Wensocket server started successfully");
 });
 
+app.get("/ping", (req, res) => {
+  res.status(200).json({ success: false, message: "Server is running" });
+});
+
 const wss = new WebSocketServer({ server });
 let usernumber = 0;
 // @ts-ignore
