@@ -1,9 +1,9 @@
-import Chat from "./pages/Chat";
-import Room from "./pages/Room";
-import St500 from "./pages/st500";
-import CheckBackend from "./components/CheckBackend";
+import Chat from "./pages/Chat.tsx";
+import Room from "./pages/Room.tsx";
+import St500 from "./pages/st500.tsx";
+import CheckBackend from "./components/CheckBackend.tsx";
 import { Routes, Route } from "react-router";
-import PageNotFound from "./pages/PageNotFound";
+import PageNotFound from "./pages/PageNotFound.tsx";
 
 const App = () => {
   return (
