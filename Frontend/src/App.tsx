@@ -1,6 +1,6 @@
 import Chat from "./pages/Chat.tsx";
 import Room from "./pages/Room.tsx";
-import St500 from "./pages/st500.tsx";
+import St500 from "./pages/St500.tsx";
 import CheckBackend from "./components/CheckBackend.tsx";
 import { Routes, Route } from "react-router";
 import PageNotFound from "./pages/PageNotFound.tsx";
