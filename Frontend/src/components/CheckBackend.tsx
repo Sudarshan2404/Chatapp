@@ -63,7 +63,7 @@ const CheckBackend = () => {
         setStatus("healthy");
       } catch (err) {
         // ✅ Ignore abort errors (React cleanup / timeout)
-        if (err.name === "AbortError") {
+        if (err instanceof Error && err.name === "AbortError") {
           console.warn("⚠️ Request aborted (timeout or cleanup)");
           return;
         }
