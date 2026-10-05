@@ -1,0 +1,57 @@
+{
+  "config": {
+    "url": "ws://localhost:8080",
+    "mode": "ramp",
+    "steps": [
+      3500
+    ],
+    "roomTargets": [
+      1000,
+      5000,
+      10000,
+      50000,
+      100000,
+      250000
+    ],
+    "perRoom": 20,
+    "msgRate": 0.5,
+    "msgSize": 100,
+    "hold": 15,
+    "connRate": 200,
+    "maxP95": 500,
+    "minDelivery": 99.5,
+    "pid": null,
+    "keepGoing": false,
+    "out": "stress-results.json"
+  },
+  "results": [
+    {
+      "users": 3500,
+      "connected": 3500,
+      "rooms": 175,
+      "connectPct": 100,
+      "connectSecs": 19.162685399999997,
+      "dropped": 0,
+      "sent": 26370,
+      "expected": 501030,
+      "received": 501030,
+      "deliveryPct": 100,
+      "msgsPerSecIn": 1758,
+      "deliveriesPerSec": 33402,
+      "p50": 609.8739000000023,
+      "p95": 1262.0271999999968,
+      "p99": 1328.7877999999982,
+      "pingP50": 363.0337999999974,
+      "pingP99": 1250.965500000002,
+      "generatorLagP99": 6.973822999999999,
+      "server": null,
+      "newFailures": {},
+      "pass": false,
+      "reasons": [
+        "p95 latency 1262ms > 500ms",
+        "/ping p99 1251ms (server loop stalling)"
+      ],
+      "generatorSaturated": false
+    }
+  ]
+}
