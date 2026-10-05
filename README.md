@@ -1,3 +1,4 @@
+Live: https://chatapp-phi.vercel.app
 # Simpl-Chat
 
 Simpl-Chat is a lightweight room based chat application. The frontend is built with React, TypeScript, and Vite. An Express server handles health checks and WebSocket connections for room creation, joining, and live message delivery.
